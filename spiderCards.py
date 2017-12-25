@@ -29,16 +29,18 @@ def create_card_pool():
 
 #start the game with only one card showing at each column's bottom
 def display(top_cols, btm_cols):
-    list1 = "    "
-    for x in top_cols:
-        list1 += x[0].display+"    "
-    print list1
-            
-        
-        
-        
-    
-    
+    row_display = []
+    matrix_height = max([len(n) for n in top_cols])
+    for i in range(matrix_height):
+        row_string = ""
+        for n in top_cols:
+            row_string += n[i].display+"    " if i < len(n) else " "+"    "
+        row_display.append(row_string)
+    for x in row_display:
+        print x
+    print "     "*10
+    print "{0:>46s}".format("%d decks left" % len(btm_cols))
+
 def main():
     top_cols = []
     btm_cols = []
@@ -50,11 +52,13 @@ def main():
         else:
             top_cols.append(init_columns(5, card_pool))
     #create the bottom 5 decks
-    btm_cols.append(init_columns(10, card_pool) for i in range(5))
+    for i in range(5):
+        btm_cols.append(init_columns(10, card_pool))
+    display(top_cols,btm_cols)
     
-    display(top_cols,'')
+    
     
         
         
-main()       
-       
+if __name__ == "__main__":
+    main()
