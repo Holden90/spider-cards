@@ -31,9 +31,8 @@ def create_card_pool():
 def display(top_cols, btm_cols):
     list1 = "    "
     for x in top_cols:
-        list1.join(x[0].display)
+        list1 += x[0].display+"    "
     print list1
-    print "hello"
             
         
         
