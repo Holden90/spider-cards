@@ -4,12 +4,15 @@ import sys
 
 #define a card class
 class card(object):
-    def __init__( self, points, color, state ):
+    def __init__( self, points, color, value ):
         self.points = points
         self.color = color
-        self.state = state
     #what to show   
-        self.display = "["+self.color+"]"+self.points if self.state else '*'
+        self.display = "*"
+        value_dict = {'A':1, 'J':11, 'Q':12, 'K':13}
+        self.value = int(self.points) if self.points in "2345678910" else value_dict[self.points]
+    def reveal(self):
+        self.display = self.points
 #function to create a column        
 def init_columns(num, card_pool):
     col = []
@@ -24,7 +27,7 @@ def create_card_pool():
     card_pool = []
     for i in range(8):
         for n in ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']:
-            card_pool.append(card(n, 'black', False ))
+            card_pool.append(card(n, 'B', False ))
     return card_pool
 
 #start the game with only one card showing at each column's bottom
@@ -36,11 +39,25 @@ def display(top_cols, btm_cols):
         for n in top_cols:
             row_string += n[i].display+"    " if i < len(n) else " "+"    "
         row_display.append(row_string)
+    print "     "*10
     for x in row_display:
         print x
     print "     "*10
     print "{0:>46s}".format("%d decks left" % len(btm_cols))
 
+def init_game(top_cols, btm_cols):
+    for n in top_cols:
+        n[-1].reveal()
+
+def move_card(top_cols, src_col, dst_col):
+    #append the last element of src_col to dst_col
+    top_cols[dst_col-1].append(top_cols[src_col-1][-1])
+    #remove the last element of src_col
+    top_cols[src_col-1] = top_cols[src_col-1][:-1]
+    for n in top_cols:
+        if n[-1].display == "*":
+            n[-1].reveal()
+    
 def main():
     top_cols = []
     btm_cols = []
@@ -54,7 +71,15 @@ def main():
     #create the bottom 5 decks
     for i in range(5):
         btm_cols.append(init_columns(10, card_pool))
-    display(top_cols,btm_cols)
+    #start the game with the bottom cards revealing
+    init_game(top_cols, btm_cols)
+    display(top_cols, btm_cols)
+    while True:
+        src_col = int(raw_input("from which columns    "))
+        dst_col = int(raw_input("to which columns    "))
+        move_card(top_cols, src_col, dst_col)
+        display(top_cols, btm_cols)
+    
     
     
     
